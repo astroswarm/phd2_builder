@@ -47,7 +47,7 @@ RUN rm -f firmware-ccd_1.3_all.deb
 RUN echo 'ATTRS{idVendor}=="1856", ATTRS{idProduct}=="0011", RUN+="/sbin/fxload -t fx2 -I /lib/firmware/ccd/qhy5.hex -D $env{DEVNAME} -s /lib/firmware/ccd/qhy5loader.hex"' > /etc/udev/rules.d/85-qhy-extended.rules
 
 # Configure display
-ENV BIT_DEPTH 32
+ENV BIT_DEPTH 16
 ENV GUI_HEIGHT 1260
 ENV GUI_WIDTH 1660
 
