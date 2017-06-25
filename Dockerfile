@@ -26,8 +26,6 @@ RUN apt-get -y install \
   zlib1g-dev
   
 # Configure application
-ENV GUI_HEIGHT 660
-ENV GUI_WIDTH 860
 ARG VERSION
 
 # Build
@@ -42,22 +40,25 @@ RUN cmake ..
 RUN make -j $(grep -c ^processor /proc/cpuinfo)
 RUN make -j $(grep -c ^processor /proc/cpuinfo) install # Installs help file to /usr/local/share/phd2/PHD2GuideHelp.zip
 WORKDIR /tmp
+RUN rm -rf /phd2-$VERSION
 RUN wget https://downloads.sourceforge.net/project/cccd/firmware/firmware-ccd_1.3_all.deb
 RUN dpkg -i firmware-ccd_1.3_all.deb ; apt-get install -fy
+RUN rm -f firmware-ccd_1.3_all.deb
 RUN echo 'ATTRS{idVendor}=="1856", ATTRS{idProduct}=="0011", RUN+="/sbin/fxload -t fx2 -I /lib/firmware/ccd/qhy5.hex -D $env{DEVNAME} -s /lib/firmware/ccd/qhy5loader.hex"' > /etc/udev/rules.d/85-qhy-extended.rules
 
-# Stage
-RUN mkdir -p /stage
-RUN cp -rf /phd2-$VERSION/tmp/phd2 /stage
+# Configure display
+ENV BIT_DEPTH 32
+ENV GUI_HEIGHT 1260
+ENV GUI_WIDTH 1660
 
 # Create startup script to run full graphical environment followed by phd2
 RUN echo "#!/usr/bin/env sh" > /start.sh
 # Docker doesn't clean the file system on restart, so clean any old lock that may exist
 RUN echo "/bin/rm -f /tmp/.X0-lock" >> /start.sh
-RUN echo "/usr/bin/Xvfb :0 -screen 0 ${GUI_WIDTH}x${GUI_HEIGHT}x16 &" >> /start.sh
+RUN echo "/usr/bin/Xvfb :0 -screen 0 ${GUI_WIDTH}x${GUI_HEIGHT}x${BIT_DEPTH} &" >> /start.sh
 RUN echo "/usr/bin/x11vnc -display :0 -forever &" >> /start.sh
 RUN echo "/usr/bin/websockify 6080 localhost:5900 &" >> /start.sh
-RUN echo "DISPLAY=:0 /stage/phd2" >> /start.sh
+RUN echo "DISPLAY=:0 /usr/local/bin/phd2" >> /start.sh
 RUN echo "" >> /start.sh
 RUN chmod +x /start.sh
 
