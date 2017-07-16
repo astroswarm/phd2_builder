@@ -2,15 +2,13 @@ ARG ARCH
 
 FROM astroswarm/base-$ARCH:latest
 
-RUN apt-get -y update
-
 # Install X dependencies
-RUN apt-get -y install \
+RUN apt-get -y update && apt-get -y install \
   x11vnc \
   xvfb
 
 # Install build dependencies
-RUN apt-get -y install \
+RUN apt-get -y update && apt-get -y install \
   build-essential \
   cmake \
   git \
