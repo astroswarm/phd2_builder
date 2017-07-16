@@ -37,10 +37,6 @@ RUN make -j $(grep -c ^processor /proc/cpuinfo)
 RUN make -j $(grep -c ^processor /proc/cpuinfo) install # Installs help file to /usr/local/share/phd2/PHD2GuideHelp.zip
 WORKDIR /tmp
 RUN rm -rf /phd2-$VERSION
-RUN wget https://downloads.sourceforge.net/project/cccd/firmware/firmware-ccd_1.3_all.deb
-RUN dpkg -i firmware-ccd_1.3_all.deb ; apt-get install -fy
-RUN rm -f firmware-ccd_1.3_all.deb
-RUN echo 'ATTRS{idVendor}=="1856", ATTRS{idProduct}=="0011", RUN+="/sbin/fxload -t fx2 -I /lib/firmware/ccd/qhy5.hex -D $env{DEVNAME} -s /lib/firmware/ccd/qhy5loader.hex"' > /etc/udev/rules.d/85-qhy-extended.rules
 
 # Configure display
 ENV BIT_DEPTH 16
