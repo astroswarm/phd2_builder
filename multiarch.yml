@@ -1,0 +1,13 @@
+---
+image: "astroswarm/phd2:latest"
+manifests:
+  -
+    image: "astroswarm/phd2-x86_64:latest"
+    platform:
+      architecture: amd64
+      os: linux
+  -
+    image: "astroswarm/phd2-armv7l:latest"
+    platform:
+      architecture: arm64
+      os: linux
